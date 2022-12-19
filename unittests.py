@@ -1,6 +1,6 @@
 import unittest
-from spark import parse, IdC, IfC, NumC, StrC
-from sexpdata import loads, Symbol
+from spark import parse, read, IdC, IfC, NumC, StrC, SparkSymbol
+from sexpdata import loads
 
 class SparkTests(unittest.TestCase):
     def test_parse_int(self):
@@ -16,15 +16,15 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(parse(""), StrC(""))
 
     def test_parse_symbol(self):
-        self.assertEqual(parse(Symbol("+")), IdC(Symbol("+")))
-        self.assertEqual(parse(Symbol("-")), IdC(Symbol("-")))
-        self.assertEqual(parse(Symbol("*")), IdC(Symbol("*")))
-        self.assertEqual(parse(Symbol("/")), IdC(Symbol("/")))
-        self.assertEqual(parse(Symbol("true")), IdC(Symbol("true")))
-        self.assertEqual(parse(Symbol("false")), IdC(Symbol("false")))
+        self.assertEqual(parse(SparkSymbol("+")), IdC(SparkSymbol("+")))
+        self.assertEqual(parse(SparkSymbol("-")), IdC(SparkSymbol("-")))
+        self.assertEqual(parse(SparkSymbol("*")), IdC(SparkSymbol("*")))
+        self.assertEqual(parse(SparkSymbol("/")), IdC(SparkSymbol("/")))
+        self.assertEqual(parse(SparkSymbol("true")), IdC(SparkSymbol("true")))
+        self.assertEqual(parse(SparkSymbol("false")), IdC(SparkSymbol("false")))
 
     def test_parse_ifc(self):
-        self.assertEqual(parse(loads("(if true 1 2)")), IfC(IdC(Symbol("true")), NumC(1), NumC(2)))
+        self.assertEqual(parse(read("(if true 1 2)")), IfC(IdC(SparkSymbol("true")), NumC(1), NumC(2)))
 
 
 if __name__ == "__main__":
