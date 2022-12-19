@@ -83,25 +83,18 @@ def main():
     s3 = "(proc (x y) go (+ x 1))"
 
 
-def replace_symbols(sexp):
-    if isinstance(sexp, Symbol):
-        return SparkSymbol(dumps(sexp))
-
-    if isinstance(sexp, list):
-        for index, e in enumerate(sexp):
-            if isinstance(e, Symbol):
-                sexp[index] = SparkSymbol(dumps(e))
-            if isinstance(e, list):
-                replace_symbols(e)
-
-    return sexp
+# Given the user program, return the interpreted value
+def top_interp(program: str):
+    return interp(parse(read(program)), top_env)
 
 
+# Given the user program as a string, return the program in s-expression form
 def read(program: str):
     return replace_symbols(loads(program))
 
 
-def interp(expr: ExprC):
+# Given an ExprC expression, evaluate its output
+def interp(expr: ExprC, env: Env) -> Value:
     match expr:
         case NumC(n):
             return n
@@ -129,6 +122,22 @@ def parse(sexp):
             return IdC(sy)
         case _:
             return "Error while parsing"
+
+
+# Given a parsed s-expression, replace all instaces of Symbol with SparkSymbol
+def replace_symbols(sexp):
+    if isinstance(sexp, Symbol):
+        return SparkSymbol(dumps(sexp))
+
+    if isinstance(sexp, list):
+        for index, e in enumerate(sexp):
+            if isinstance(e, Symbol):
+                sexp[index] = SparkSymbol(dumps(e))
+            if isinstance(e, list):
+                replace_symbols(e)
+
+    return sexp
+
 
 
 if __name__ == "__main__":

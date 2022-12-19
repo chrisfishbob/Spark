@@ -1,9 +1,14 @@
 import unittest
 from spark import *
-from sexpdata import loads
 
 
 class SparkTests(unittest.TestCase):
+    def test_top_interp(self):
+        self.assertEqual(top_interp('1'), 1)
+        self.assertEqual(top_interp('23'), 23)
+        self.assertEqual(top_interp('-70'), -70)
+        self.assertEqual(top_interp('"Hello, world!"'), "Hello, world!")
+
     def test_parse_int(self):
         self.assertEqual(parse(1), NumC(1))
         self.assertEqual(parse(-1), NumC(-1))
