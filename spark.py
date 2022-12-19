@@ -2,7 +2,17 @@ from typing import NamedTuple, Union
 from sexpdata import loads, dumps, Symbol
 
 class SparkSymbol(NamedTuple):
-    symbol: str
+    symbol_string: str
+
+class IdC():
+    def __init__(self, symbol) -> None:
+        self.symbol = SparkSymbol(symbol)
+    
+    def __repr__(self):
+        return self.symbol.symbol_string
+    
+    def __eq__(self, other):
+        return self.symbol == other
 
 class IfC(NamedTuple):
     test: "ExprC"
@@ -13,8 +23,6 @@ class AppC(NamedTuple):
     func: "ExprC"
     args: list["ExprC"]
 
-class IdC(NamedTuple):
-    name: SparkSymbol
 
 class NumC(NamedTuple):
     num: int 
@@ -22,17 +30,19 @@ class NumC(NamedTuple):
 class StrC(NamedTuple):
     string: str 
 
+class LamC(NamedTuple):
+    params: list[SparkSymbol]
+    body: "ExprC"
+
 
 ExprC = Union[NumC, StrC, IdC, IfC, AppC] 
 
 
 def main():
-    s = loads('1')
-    s1 = loads('(if true 1 2)')
-    s2 = loads("(+ 1 2)")
-    s3 = loads("(proc (x y) go (+ x 1))")
-    print(replace_symbols(s1))
-    print(parse(replace_symbols(s1)))
+    s1 = '(if true 1 2)'
+    s2 = "(+ 1 2)"
+    s3 = "(proc (x y) go (+ x 1))"
+
 
 
 def replace_symbols(sexp):
@@ -60,20 +70,25 @@ def interp(expr: ExprC):
         case StrC(s):
             return s
 
+
 def parse(sexp):
     match sexp:
         case int():
             return NumC(sexp)
         case str():
             return StrC(sexp)
+        # (if test then otherwise)
         case [SparkSymbol("if"), test_cond, then, otherwise]:
             return IfC(parse(test_cond), parse(then), parse(otherwise)) 
-        case [SparkSymbol("proc"), [*params], Symbol(), body]:
-            return "Proc"
+        # (proc (args) go body)
+        case [SparkSymbol("proc"), [*params], SparkSymbol("go"), body]:
+            return LamC(params, parse(body))
+        # (+ 1 2)
         case [func, *args] if isinstance(sexp, list):
-            return AppC(func, [parse(arg) for arg in args]) 
+            return AppC(parse(func), [parse(arg) for arg in args]) 
+        # `true
         case SparkSymbol(sy):
-            return IdC(SparkSymbol(sy))
+            return IdC(sy)
         case _:
             return "Error while parsing"
 
