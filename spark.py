@@ -9,6 +9,12 @@ class IfC(NamedTuple):
 class IdC(NamedTuple):
     name: Symbol 
 
+class NumC(NamedTuple):
+    num: int 
+
+class StrC(NamedTuple):
+    string: str 
+
 
     
 def main():
@@ -17,11 +23,14 @@ def main():
     # print(s1)
     # print(type(s1[0]))
     print(parse(s1))
+    print(parse("+"))
 
 def parse(sexp):
     match sexp:
-        case int() | float() | str():
-            return sexp
+        case int():
+            return NumC(sexp)
+        case str():
+            return StrC(sexp)
         case [Symbol(), test_cond, then, otherwise] if dumps(sexp[0]) == "if":
             return IfC(parse(test_cond), parse(then), parse(otherwise)) 
         case Symbol():
