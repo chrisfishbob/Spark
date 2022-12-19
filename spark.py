@@ -1,10 +1,15 @@
-from typing import NamedTuple
+from typing import NamedTuple, Union
 from sexpdata import loads, dumps, Symbol
 
 class IfC(NamedTuple):
-    test: any
-    then: any
-    otherwise: any
+    test: "ExprC"
+    then: "ExprC"
+    otherwise: "ExprC"
+
+class AppC(NamedTuple):
+    func: "ExprC"
+    args: list["ExprC"]
+
 
 class IdC(NamedTuple):
     name: Symbol 
@@ -15,15 +20,24 @@ class NumC(NamedTuple):
 class StrC(NamedTuple):
     string: str 
 
+ExprC = Union[NumC, StrC, IdC, IfC, AppC] 
 
-    
+
 def main():
     s = loads('1')
     s1 = loads('(if true 1 2)')
-    # print(s1)
-    # print(type(s1[0]))
+    s2 = loads("(+ 1 2)")
+    print(parse(s))
     print(parse(s1))
-    print(parse("+"))
+    print(parse(s2))
+
+
+def interp(expr: ExprC):
+    match expr:
+        case NumC(n):
+            return n
+        case StrC(s):
+            return s
 
 def parse(sexp):
     match sexp:
@@ -33,6 +47,8 @@ def parse(sexp):
             return StrC(sexp)
         case [Symbol(), test_cond, then, otherwise] if dumps(sexp[0]) == "if":
             return IfC(parse(test_cond), parse(then), parse(otherwise)) 
+        case [func, *args]:
+            return AppC(func, [parse(arg) for arg in args]) 
         case Symbol():
             return IdC(sexp)
         case _:
