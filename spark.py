@@ -137,6 +137,30 @@ def parse(sexp):
         case _:
             return "Error while parsing"
 
+def primop_interp(op: PrimopV, args: list[Value]) -> Value:
+    match op, args:
+        case PrimopV(SparkSymbol("+")), [n1, n2]:
+            return n1 + n2
+        case PrimopV(SparkSymbol("-")), [n1, n2]:
+            return n1 - n2
+        case PrimopV(SparkSymbol("*")), [n1, n2]:
+            return n1 * n2
+        case PrimopV(SparkSymbol("/")), [n1, n2]:
+            return n1 / n2
+        case PrimopV(SparkSymbol("<=")), [n1, n2]:
+            return n1 <= n2
+        case PrimopV(SparkSymbol("equal?")), [v1, v2]:
+            if type(v1) == type(v2):
+                return v1 == v2
+            raise TypeError(f"Types much match for equal? comparision")
+            
+        case PrimopV(SparkSymbol("error")), [error_message]:
+            raise RuntimeError(f"User error: {error_message}")
+        case _:
+            raise RuntimeError("Spark Error: Failed to match in primop iinterp")
+        
+
+
 
 def lookup(target: SparkSymbol, env: Env) -> Value:
     for bind in env.bindings:

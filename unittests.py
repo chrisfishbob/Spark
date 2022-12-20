@@ -75,6 +75,17 @@ class SparkTests(unittest.TestCase):
                                    [IdC("x"),
                                     IdC("y")])))
 
+    def test_primop_interp(self):
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("+")), [1, 2]), 3)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("*")), [2, 2]), 4)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("/")), [4, 2]), 2)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("-")), [4, 2]), 2)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("<=")), [4, 2]), False)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("equal?")), [4, 2]), False)
+        self.assertEqual(primop_interp(PrimopV(SparkSymbol("equal?")), [4, 4]), True)
+        with self.assertRaises(TypeError):
+            primop_interp(PrimopV(SparkSymbol("equal?")), ["4", 4])
+
     def test_lookup(self):
         self.assertEqual(lookup(SparkSymbol("+"), top_env), PrimopV(SparkSymbol("+")))
         self.assertEqual(lookup(SparkSymbol("-"), top_env), PrimopV(SparkSymbol("-")))
