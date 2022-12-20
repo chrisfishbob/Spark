@@ -15,6 +15,15 @@ class SparkTests(unittest.TestCase):
     
     def test_interp_string(self):
         self.assertEqual(interp(StrC("Hello"), top_env), "Hello")
+        self.assertEqual(interp(StrC("World"), top_env), "World") 
+    
+    def test_interp_id(self):
+        self.assertEqual(interp(IdC("true"), top_env), True)
+        self.assertEqual(interp(IdC("false"), top_env), False)
+        self.assertEqual(interp(IdC("+"), top_env), PrimopV(SparkSymbol("+")))
+        self.assertEqual(interp(IdC("-"), top_env), PrimopV(SparkSymbol("-")))
+        self.assertEqual(interp(IdC("*"), top_env), PrimopV(SparkSymbol("*")))
+        self.assertEqual(interp(IdC("/"), top_env), PrimopV(SparkSymbol("/")))
 
 
     def test_parse_int(self):

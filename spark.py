@@ -108,8 +108,8 @@ def interp(expr: ExprC, env: Env) -> Value:
                 return interp(otherwise, env)
         case LamC(params, body):
             return CloV(params, body, env)
-        case IdC(symbol):
-            return lookup(symbol, env)
+        case IdC(symbol=s):
+            return lookup(s, env)
         case AppC(func, args):
             func_value = interp(func, env)
             pass
