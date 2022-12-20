@@ -16,6 +16,14 @@ class SparkTests(unittest.TestCase):
     def test_interp_string(self):
         self.assertEqual(interp(StrC("Hello"), top_env), "Hello")
         self.assertEqual(interp(StrC("World"), top_env), "World") 
+
+    def test_interp_if(self):
+        self.assertEqual(interp(IfC(IdC("true"), NumC(1), NumC(2)), top_env), 1)
+        self.assertEqual(interp(IfC(IdC("false"), NumC(1), NumC(2)), top_env), 2)
+    
+    def test_interp_lamc(self):
+        self.assertEqual(interp(LamC([SparkSymbol("x")], NumC(1)), top_env), CloV([SparkSymbol("x")], NumC(1), top_env))
+        self.assertEqual(interp(LamC([SparkSymbol("x"), SparkSymbol("y")], NumC(1)), top_env), CloV([SparkSymbol("x"), SparkSymbol("y")], NumC(1), top_env))
     
     def test_interp_id(self):
         self.assertEqual(interp(IdC("true"), top_env), True)
