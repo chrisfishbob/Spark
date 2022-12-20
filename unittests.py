@@ -66,6 +66,8 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(lookup(SparkSymbol("<="), top_env), PrimopV(SparkSymbol("<=")))
         self.assertEqual(lookup(SparkSymbol("error"), top_env), PrimopV(SparkSymbol("error")))
         self.assertEqual(lookup(SparkSymbol("equal?"), top_env), PrimopV(SparkSymbol("equal?")))
+        with self.assertRaises(Exception):
+            lookup(SparkSymbol("invalid"), top_env)
 
 
 if __name__ == "__main__":
