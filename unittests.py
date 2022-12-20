@@ -8,6 +8,14 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(top_interp('23'), 23)
         self.assertEqual(top_interp('-70'), -70)
         self.assertEqual(top_interp('"Hello, world!"'), "Hello, world!")
+    
+    def test_interp_int(self):
+        self.assertEqual(interp(NumC(1), top_env), 1)
+        self.assertEqual(interp(NumC(23), top_env), 23)
+    
+    def test_interp_string(self):
+        self.assertEqual(interp(StrC("Hello"), top_env), "Hello")
+
 
     def test_parse_int(self):
         self.assertEqual(parse(1), NumC(1))
@@ -40,15 +48,24 @@ class SparkTests(unittest.TestCase):
                              NumC(2)))
 
     def test_parse_lamc(self):
-        self.assertEqual(parse(read("(proc (x y) go (+ 1 2))")),
+        self.assertEqual(parse(read("(func (x y) do (+ 1 2))")),
                          LamC([SparkSymbol("x"), SparkSymbol("y")],
                               AppC(IdC("+"),
                                    [NumC(1), NumC(2)])))
-        self.assertEqual(parse(read("(proc (x y) go (* x y))")),
+        self.assertEqual(parse(read("(func (x y) do (* x y))")),
                          LamC([SparkSymbol("x"), SparkSymbol("y")],
                               AppC(IdC("*"),
                                    [IdC("x"),
                                     IdC("y")])))
+
+    def test_lookup(self):
+        self.assertEqual(lookup(SparkSymbol("+"), top_env), PrimopV(SparkSymbol("+")))
+        self.assertEqual(lookup(SparkSymbol("-"), top_env), PrimopV(SparkSymbol("-")))
+        self.assertEqual(lookup(SparkSymbol("*"), top_env), PrimopV(SparkSymbol("*")))
+        self.assertEqual(lookup(SparkSymbol("/"), top_env), PrimopV(SparkSymbol("/")))
+        self.assertEqual(lookup(SparkSymbol("<="), top_env), PrimopV(SparkSymbol("<=")))
+        self.assertEqual(lookup(SparkSymbol("error"), top_env), PrimopV(SparkSymbol("error")))
+        self.assertEqual(lookup(SparkSymbol("equal?"), top_env), PrimopV(SparkSymbol("equal?")))
 
 
 if __name__ == "__main__":

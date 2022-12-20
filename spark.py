@@ -100,6 +100,20 @@ def interp(expr: ExprC, env: Env) -> Value:
             return n
         case StrC(s):
             return s
+        case IfC(condition, then, otherwise):
+            condition_result = interp(condition, env)
+            if condition_result:
+                return interp(then, env)
+            else:
+                return interp(otherwise, env)
+        case LamC(params, body):
+            return CloV(params, body, env)
+        case IdC(symbol):
+            return lookup(symbol, env)
+        case AppC(func, args):
+            func_value = interp(func, env)
+            pass
+
 
 
 def parse(sexp):
@@ -112,7 +126,7 @@ def parse(sexp):
         case [SparkSymbol("if"), test_cond, then, otherwise]:
             return IfC(parse(test_cond), parse(then), parse(otherwise))
         # (proc (args) go body)
-        case [SparkSymbol("proc"), [*params], SparkSymbol("go"), body]:
+        case [SparkSymbol("func"), [*params], SparkSymbol("do"), body]:
             return LamC(params, parse(body))
         # (+ 1 2)
         case [func, *args] if isinstance(sexp, list):
@@ -122,6 +136,14 @@ def parse(sexp):
             return IdC(sy)
         case _:
             return "Error while parsing"
+
+
+def lookup(target: SparkSymbol, env: Env) -> Value:
+    for bind in env.bindings:
+        if bind.name == target:
+            return bind.value
+    
+    raise LookupError(f"Symbol not found in environment: {env}") 
 
 
 # Given a parsed s-expression, replace all instaces of Symbol with SparkSymbol
@@ -137,6 +159,7 @@ def replace_symbols(sexp):
                 replace_symbols(e)
 
     return sexp
+
 
 
 
