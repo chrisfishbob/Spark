@@ -112,7 +112,10 @@ def interp(expr: ExprC, env: Env) -> Value:
             return lookup(s, env)
         case AppC(func, args):
             func_value = interp(func, env)
-            pass
+            if isinstance(func_value, CloV):
+                pass
+            elif isinstance(func_value, PrimopV):
+                return primop_interp(func_value, [interp(arg, env) for arg in args])
 
 
 
@@ -183,7 +186,6 @@ def replace_symbols(sexp):
                 replace_symbols(e)
 
     return sexp
-
 
 
 

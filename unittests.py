@@ -8,23 +8,41 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(top_interp('23'), 23)
         self.assertEqual(top_interp('-70'), -70)
         self.assertEqual(top_interp('"Hello, world!"'), "Hello, world!")
-    
+
     def test_interp_int(self):
         self.assertEqual(interp(NumC(1), top_env), 1)
         self.assertEqual(interp(NumC(23), top_env), 23)
-    
+
     def test_interp_string(self):
         self.assertEqual(interp(StrC("Hello"), top_env), "Hello")
-        self.assertEqual(interp(StrC("World"), top_env), "World") 
+        self.assertEqual(interp(StrC("World"), top_env), "World")
 
     def test_interp_if(self):
-        self.assertEqual(interp(IfC(IdC("true"), NumC(1), NumC(2)), top_env), 1)
-        self.assertEqual(interp(IfC(IdC("false"), NumC(1), NumC(2)), top_env), 2)
-    
+        self.assertEqual(
+            interp(IfC(IdC("true"), NumC(1), NumC(2)), top_env), 1)
+        self.assertEqual(
+            interp(IfC(IdC("false"), NumC(1), NumC(2)), top_env), 2)
+        self.assertEqual(
+            interp(IfC(IdC("false"), NumC(1), NumC(2)), top_env), 2)
+        self.assertEqual(
+            interp(IfC(AppC(IdC("equal?"), [NumC(7), NumC(7)]), NumC(1), NumC(2)), top_env), 1)
+        self.assertEqual(
+            interp(IfC(AppC(IdC("equal?"), [NumC(8), NumC(7)]), NumC(1), NumC(2)), top_env), 2)
+        self.assertEqual(
+            interp(IfC(AppC(IdC("equal?"), [NumC(8), NumC(7)]),
+                       NumC(1),
+                       AppC(IdC("*"), [NumC(5), NumC(6)])), top_env), 30)
+        self.assertEqual(
+            interp(IfC(AppC(IdC("equal?"), [NumC(8), NumC(8)]),
+                       AppC(IdC("*"), [NumC(5), NumC(7)]), 
+                       AppC(IdC("*"), [NumC(5), NumC(6)])), top_env), 35)
+
     def test_interp_lamc(self):
-        self.assertEqual(interp(LamC([SparkSymbol("x")], NumC(1)), top_env), CloV([SparkSymbol("x")], NumC(1), top_env))
-        self.assertEqual(interp(LamC([SparkSymbol("x"), SparkSymbol("y")], NumC(1)), top_env), CloV([SparkSymbol("x"), SparkSymbol("y")], NumC(1), top_env))
-    
+        self.assertEqual(interp(LamC([SparkSymbol("x")], NumC(1)), top_env), CloV(
+            [SparkSymbol("x")], NumC(1), top_env))
+        self.assertEqual(interp(LamC([SparkSymbol("x"), SparkSymbol("y")], NumC(
+            1)), top_env), CloV([SparkSymbol("x"), SparkSymbol("y")], NumC(1), top_env))
+
     def test_interp_id(self):
         self.assertEqual(interp(IdC("true"), top_env), True)
         self.assertEqual(interp(IdC("false"), top_env), False)
@@ -33,6 +51,22 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(interp(IdC("*"), top_env), PrimopV(SparkSymbol("*")))
         self.assertEqual(interp(IdC("/"), top_env), PrimopV(SparkSymbol("/")))
 
+    def test_interp_appc_primop(self):
+        self.assertEqual(
+            interp(AppC(IdC("+"), [NumC(1), NumC(2)]), top_env), 3)
+        self.assertEqual(
+            interp(AppC(IdC("-"), [NumC(1), NumC(2)]), top_env), -1)
+        self.assertEqual(
+            interp(AppC(IdC("*"), [NumC(5), NumC(2)]), top_env), 10)
+        self.assertEqual(
+            interp(AppC(IdC("/"), [NumC(16), NumC(4)]), top_env), 4)
+        self.assertEqual(
+            interp(AppC(IdC("equal?"), [NumC(16), NumC(4)]), top_env), False)
+        self.assertEqual(
+            interp(AppC(IdC("equal?"), [NumC(16), NumC(16)]), top_env), True)
+        self.assertEqual(
+            interp(AppC(IdC("equal?"),
+                        [NumC(16), AppC(IdC("+"), [NumC(4), NumC(12)])]), top_env), True)
 
     def test_parse_int(self):
         self.assertEqual(parse(1), NumC(1))
@@ -80,20 +114,30 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(primop_interp(PrimopV(SparkSymbol("*")), [2, 2]), 4)
         self.assertEqual(primop_interp(PrimopV(SparkSymbol("/")), [4, 2]), 2)
         self.assertEqual(primop_interp(PrimopV(SparkSymbol("-")), [4, 2]), 2)
-        self.assertEqual(primop_interp(PrimopV(SparkSymbol("<=")), [4, 2]), False)
-        self.assertEqual(primop_interp(PrimopV(SparkSymbol("equal?")), [4, 2]), False)
-        self.assertEqual(primop_interp(PrimopV(SparkSymbol("equal?")), [4, 4]), True)
+        self.assertEqual(primop_interp(
+            PrimopV(SparkSymbol("<=")), [4, 2]), False)
+        self.assertEqual(primop_interp(
+            PrimopV(SparkSymbol("equal?")), [4, 2]), False)
+        self.assertEqual(primop_interp(
+            PrimopV(SparkSymbol("equal?")), [4, 4]), True)
         with self.assertRaises(TypeError):
             primop_interp(PrimopV(SparkSymbol("equal?")), ["4", 4])
 
     def test_lookup(self):
-        self.assertEqual(lookup(SparkSymbol("+"), top_env), PrimopV(SparkSymbol("+")))
-        self.assertEqual(lookup(SparkSymbol("-"), top_env), PrimopV(SparkSymbol("-")))
-        self.assertEqual(lookup(SparkSymbol("*"), top_env), PrimopV(SparkSymbol("*")))
-        self.assertEqual(lookup(SparkSymbol("/"), top_env), PrimopV(SparkSymbol("/")))
-        self.assertEqual(lookup(SparkSymbol("<="), top_env), PrimopV(SparkSymbol("<=")))
-        self.assertEqual(lookup(SparkSymbol("error"), top_env), PrimopV(SparkSymbol("error")))
-        self.assertEqual(lookup(SparkSymbol("equal?"), top_env), PrimopV(SparkSymbol("equal?")))
+        self.assertEqual(lookup(SparkSymbol("+"), top_env),
+                         PrimopV(SparkSymbol("+")))
+        self.assertEqual(lookup(SparkSymbol("-"), top_env),
+                         PrimopV(SparkSymbol("-")))
+        self.assertEqual(lookup(SparkSymbol("*"), top_env),
+                         PrimopV(SparkSymbol("*")))
+        self.assertEqual(lookup(SparkSymbol("/"), top_env),
+                         PrimopV(SparkSymbol("/")))
+        self.assertEqual(lookup(SparkSymbol("<="), top_env),
+                         PrimopV(SparkSymbol("<=")))
+        self.assertEqual(lookup(SparkSymbol("error"), top_env),
+                         PrimopV(SparkSymbol("error")))
+        self.assertEqual(lookup(SparkSymbol("equal?"), top_env),
+                         PrimopV(SparkSymbol("equal?")))
         with self.assertRaises(Exception):
             lookup(SparkSymbol("invalid"), top_env)
 
