@@ -51,6 +51,13 @@ class SparkTests(unittest.TestCase):
         self.assertEqual(interp(IdC("*"), top_env), PrimopV(SparkSymbol("*")))
         self.assertEqual(interp(IdC("/"), top_env), PrimopV(SparkSymbol("/")))
 
+    def test_interp_appc(self):
+        self.assertEqual(interp(AppC(LamC([SparkSymbol("x")], NumC(1)), [NumC(1)]), top_env), 1)
+        self.assertEqual(interp(AppC(LamC([SparkSymbol("x"), SparkSymbol("y")], NumC(1)), [NumC(1), NumC(2)]), top_env), 1)
+        self.assertEqual(interp(AppC(LamC([SparkSymbol("x"), SparkSymbol("y")], AppC(IdC("+"), [IdC("x"), IdC("y")])), [NumC(1), NumC(2)]), top_env), 3)
+        with self.assertRaises(SyntaxError):
+            interp(AppC(LamC([SparkSymbol("x"), SparkSymbol("y")], AppC(IdC("+"), [IdC("x"), IdC("y")])), [NumC(1)]), top_env)
+
     def test_interp_appc_primop(self):
         self.assertEqual(
             interp(AppC(IdC("+"), [NumC(1), NumC(2)]), top_env), 3)

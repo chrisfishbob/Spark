@@ -110,13 +110,22 @@ def interp(expr: ExprC, env: Env) -> Value:
             return CloV(params, body, env)
         case IdC(symbol=s):
             return lookup(s, env)
+
         case AppC(func, args):
             func_value = interp(func, env)
             if isinstance(func_value, CloV):
-                pass
+                if len(args) != len(func_value.params):
+                    raise SyntaxError(f"Expected {len(func_value.params)} arguments, got {len(args)}")
+
+                arg_vals = [interp(arg, env) for arg in args]
+                new_env = Env(func_value.env.bindings +
+                              [Bind(param, arg) for param, arg in zip(func_value.params, arg_vals)])
+                return interp(func_value.body, new_env)
+
             elif isinstance(func_value, PrimopV):
                 return primop_interp(func_value, [interp(arg, env) for arg in args])
-
+            else:
+                raise SyntaxError(f"Cannot apply non-function {func_value}")
 
 
 def parse(sexp):
@@ -140,6 +149,7 @@ def parse(sexp):
         case _:
             return "Error while parsing"
 
+
 def primop_interp(op: PrimopV, args: list[Value]) -> Value:
     match op, args:
         case PrimopV(SparkSymbol("+")), [n1, n2]:
@@ -156,21 +166,20 @@ def primop_interp(op: PrimopV, args: list[Value]) -> Value:
             if type(v1) == type(v2):
                 return v1 == v2
             raise TypeError(f"Types much match for equal? comparision")
-            
+
         case PrimopV(SparkSymbol("error")), [error_message]:
             raise RuntimeError(f"User error: {error_message}")
         case _:
-            raise RuntimeError("Spark Error: Failed to match in primop iinterp")
-        
-
+            raise RuntimeError(
+                "Spark Error: Failed to match in primop iinterp")
 
 
 def lookup(target: SparkSymbol, env: Env) -> Value:
     for bind in env.bindings:
         if bind.name == target:
             return bind.value
-    
-    raise LookupError(f"Symbol not found in environment: {env}") 
+
+    raise LookupError(f"Symbol not found in environment: {env}")
 
 
 # Given a parsed s-expression, replace all instaces of Symbol with SparkSymbol
@@ -186,7 +195,6 @@ def replace_symbols(sexp):
                 replace_symbols(e)
 
     return sexp
-
 
 
 if __name__ == "__main__":
