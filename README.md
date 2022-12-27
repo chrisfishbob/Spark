@@ -55,6 +55,17 @@ Evaluates to a lambda function that takes in x and y and applies the + operator.
 Evaluates to 8
 
 
+### Vars
+Since Spark programs are written as a single expression, Spark has a built-in "vars" form to make coding easier:
+```
+(vars: (y = 3)
+       (x = 5)
+ body:
+       (+ y x))
+```
+
+This is equivalent to the basic func form above and infact, parses to the same AST.
+
 
 
 ### IO
