@@ -14,7 +14,7 @@ The syntax of Spark can be captured as follows:
 ```
 
 ## Spark Example Programs
-###Basic arithmetic operation:
+### Basic arithmetic operation:
 ```
 (+ 1 2)
 ```
