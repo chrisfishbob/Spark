@@ -1,5 +1,16 @@
 # Spark
-Functional s-expression based programming language implemented in Python
+Dynamically typed, eager evaluated programming language implemented in Python
+
+## Language Overview
+Spark currently supports 3 main types: integers, booleans, and strings. Values that get evaluated are printed directly to the terminal rather than a specific print function call.
+
+For example, these lines:
+```
+(+ 1 2)
+"Hello, World!"
+1
+```
+prints "3", "Hello, World!", and "1" to the console respectively
 
 ## Installation / Dependencies
 The Spark interpreter requires Python@3.10 or above, to check your Python version:
