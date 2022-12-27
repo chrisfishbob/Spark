@@ -9,7 +9,7 @@ The syntax of Spark can be captured as follows:
  	|	String
  	|	{if Expr Expr Expr}
  	|	{vars: [id = Expr] ... body: Expr}
- 	|	{proc {id ...} go Expr}
+ 	|	{func {id ...} do Expr}
  	|	{Expr Expr ...}
 ```
 
@@ -47,7 +47,14 @@ Outputs False.
 ```
 (func (x y) do (+ x y))
 ```
-Evaluates to a lambda function that takes in x and y and applies the + operator.
+Evaluates to a lambda function that takes in x and y and applies the + operator. The function can be evaluated simply by passing in its parameters.
+
+```
+((func (x y) do (+ x y) 3 5)
+```
+Evaluates to 8
+
+
 
 
 ### IO
