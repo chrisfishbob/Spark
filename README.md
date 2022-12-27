@@ -1,5 +1,5 @@
 # Spark
-Dynamically typed, eager evaluated programming language implemented in Python.  
+Dynamically typed, eager evaluated programming language implemented in Python.  <br />
 
 ## Language Syntax Overview
 The syntax of Spark can be captured as follows:
