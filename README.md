@@ -1,7 +1,18 @@
 # Spark
 Dynamically typed, eager evaluated programming language implemented in Python
 
-## Language Overview
+## Language Syntax Overview
+The syntax of Spark can be captured as follows:
+```
+ Expr	 	=	 	Num
+ 	 	|	 	id
+ 	 	|	 	String
+ 	 	|	 	{if Expr Expr Expr}
+ 	 	|	 	{vars: [id = Expr] ... body: Expr}
+ 	 	|	 	{proc {id ...} go Expr}
+ 	 	|	 	{Expr Expr ...}
+```
+
 Spark currently supports 3 main types: integers, booleans, and strings. Values that get evaluated are printed directly to the terminal rather than a specific print function call.
 
 For example, these lines:
@@ -10,7 +21,9 @@ For example, these lines:
 "Hello, World!"
 1
 ```
-prints "3", "Hello, World!", and "1" to the console respectively
+prints "3", "Hello, World!", and "1" to the console respectively.
+
+
 
 ## Installation / Dependencies
 The Spark interpreter requires Python@3.10 or above, to check your Python version:
