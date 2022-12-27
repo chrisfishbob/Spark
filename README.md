@@ -18,13 +18,13 @@ The syntax of Spark can be captured as follows:
 ```
 (+ 1 2)
 ```
-Outputs 3
+Outputs 3 <br />
 
 Nested evaluations
 ```
 (+ (+ 1 2) 3)
 ```
-Outputs 6
+Outputs 6 <br />
 
 Conditionals
 ```
@@ -33,7 +33,7 @@ Conditionals
     True
     False)
 ```
-Outputs True, where as:
+Outputs True, where as:<br />
 ```
 (if (equals (- 1 2)
             (- 2 1))
