@@ -43,6 +43,14 @@ Outputs True, where as:<br />
 Outputs False.
 
 
+### Functions
+```
+(func (x y) do (+ x y))
+```
+Evaluates to a lambda function that takes in x and y and applies the + operator.
+
+
+### IO
 Values that get evaluated are printed directly to the terminal rather than a specific print function call.
 
 For example, these lines:
