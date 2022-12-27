@@ -13,7 +13,37 @@ The syntax of Spark can be captured as follows:
  	|	{Expr Expr ...}
 ```
 
-Spark currently supports 3 main types: integers, booleans, and strings. Values that get evaluated are printed directly to the terminal rather than a specific print function call.
+### Spark Example Programs
+Basic arithmetic operation:
+```
+(+ 1 2)
+```
+Outputs 3
+
+Nested evaluations
+```
+(+ (+ 1 2) 3)
+```
+Outputs 6
+
+Conditionals
+```
+(if (equals (+ 1 2)
+            (+ 2 1))
+    True
+    False)
+```
+Outputs True, where as:
+```
+(if (equals (- 1 2)
+            (- 2 1))
+    True
+    False)
+```
+Outputs False.
+
+
+Values that get evaluated are printed directly to the terminal rather than a specific print function call.
 
 For example, these lines:
 ```
