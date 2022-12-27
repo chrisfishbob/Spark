@@ -1,7 +1,7 @@
 # Spark
 Dynamically typed, eager evaluated programming language implemented in Python.  <br /><br /><br />
 
-## Language Syntax Overview
+# Language Syntax Overview
 The syntax of Spark can be captured as follows:
 ```
  Expr	=	Num
@@ -13,8 +13,8 @@ The syntax of Spark can be captured as follows:
  	|	{Expr Expr ...}
 ```
 
-### Spark Example Programs
-####Basic arithmetic operation:
+## Spark Example Programs
+###Basic arithmetic operation:
 ```
 (+ 1 2)
 ```
@@ -55,7 +55,7 @@ prints "3", "Hello, World!", and "1" to the console respectively.
 
 
 
-## Installation / Dependencies
+# Installation / Dependencies
 The Spark interpreter requires Python@3.10 or above, to check your Python version:
 ```
 python3 --version
