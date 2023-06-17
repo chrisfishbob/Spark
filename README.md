@@ -13,7 +13,7 @@ work but here's a simple one in curl that you can just paste into your terminal 
 curl -X POST -d '{"expr": "(+ 1 2)"}' https://api.iamchrishsu.com/spark
 ```
 
-<br /><br/>
+<br />
 
 # Installation / Dependencies
 If you do want to give it a install:
