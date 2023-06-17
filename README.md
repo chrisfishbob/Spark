@@ -55,14 +55,14 @@ Outputs 6 <br />
 
 ### Conditionals
 ```
-(if (equals (+ 1 2)
+(if (equal (+ 1 2)
             (+ 2 1))
     True
     False)
 ```
 Outputs True, where as:<br />
 ```
-(if (equals (- 1 2)
+(if (equal (- 1 2)
             (- 2 1))
     True
     False)
@@ -105,3 +105,8 @@ For example, these lines:
 1
 ```
 prints "3", "Hello, World!", and "1" to the console respectively.
+
+
+
+### I Found A Bug!
+I'm sure you did! But I won't fix it. This is just for fun, I'm off doing other things now
