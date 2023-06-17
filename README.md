@@ -105,6 +105,3 @@ For example, these lines:
 1
 ```
 prints "3", "Hello, World!", and "1" to the console respectively.
-
-
-# Installation / Dependencies
